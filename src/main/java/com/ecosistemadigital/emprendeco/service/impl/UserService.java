@@ -12,22 +12,24 @@ public class UserService {
 
     private final IUserRepository userRepository;
 
-    public User authenticate(String email, String password) {
-        return userRepository.findByEmail(email)
-                .filter(user -> user.getPassword().equals(password))
+    public User authenticate(User user) {
+        return userRepository.findByEmail(user.getEmail())
+                .filter(user1 -> user1.getPassword().equals(user.getPassword()))
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
     }
 
-    public User registerUser(String name, String email, String password, Role role) {
-        if (userRepository.findByEmail(email).isPresent()) {
+    public User registerUser(User user) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("El correo ya está en uso");
         }
 
-        User newUser = new User();
-        newUser.setName(name);
-        newUser.setEmail(email);
-        newUser.setPassword(password);
-        newUser.setRole(role);
+        User newUser = User.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .build();
 
         return userRepository.save(newUser);
     }

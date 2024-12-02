@@ -1,12 +1,12 @@
 package com.ecosistemadigital.emprendeco.controller;
 
+import com.ecosistemadigital.emprendeco.Dto.LoginResponseDTO;
+import com.ecosistemadigital.emprendeco.Dto.UserResponseDTO;
 import com.ecosistemadigital.emprendeco.entity.User;
 import com.ecosistemadigital.emprendeco.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -16,16 +16,25 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        String email = credentials.get("email");
-        String password = credentials.get("password");
+    public ResponseEntity<?> login(@RequestBody User user) {
+
         try {
-            User user = userService.authenticate(email, password);
-            return ResponseEntity.ok(user);
+            User userFind = userService.authenticate(user);
+
+            // Convertir User en LoginResponseDTO
+            LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+                    .id(userFind.getId())
+                    .name(userFind.getName())
+                    .email(userFind.getEmail())
+                    .role(userFind.getRole().toString())
+                    .build();
+
+            return ResponseEntity.ok(responseDTO);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(400).body(ex.getMessage());
         }
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -34,13 +43,17 @@ public class UserController {
         }
 
         try {
-            User registeredUser = userService.registerUser(
-                    user.getName(),
-                    user.getEmail(),
-                    user.getPassword(),
-                    user.getRole()
-            );
-            return ResponseEntity.ok(registeredUser);
+            User registeredUser = userService.registerUser(user);
+
+            // Convertir la entidad User en UserResponseDTO
+            UserResponseDTO responseDTO = UserResponseDTO.builder()
+                    .id(registeredUser.getId())
+                    .name(registeredUser.getName())
+                    .email(registeredUser.getEmail())
+                    .role(registeredUser.getRole().toString())
+                    .build();
+
+            return ResponseEntity.ok(responseDTO);
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }

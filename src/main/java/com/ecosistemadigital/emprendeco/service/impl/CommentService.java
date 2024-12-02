@@ -71,7 +71,15 @@ public class CommentService implements ICommentService {
 
 
     @Override
-    public List<Comment> findByProjectId(Long projectId) {
-        return commentRepository.findByProjectId(projectId);
+    public List<CommentDTO> findByProjectId(Long projectId) {
+        return commentRepository.findByProjectId(projectId).stream()
+                .map(comment -> CommentDTO.builder()
+                        .id(comment.getId())
+                        .text(comment.getText())
+                        .authorId(comment.getAuthor().getId())
+                        .authorName(comment.getAuthor().getName())
+                        .projectId(comment.getProject().getId())
+                        .build())
+                .toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.ecosistemadigital.emprendeco.controller;
 
+import com.ecosistemadigital.emprendeco.Dto.ProjectDTO;
 import com.ecosistemadigital.emprendeco.entity.Project;
 import com.ecosistemadigital.emprendeco.repository.IProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +31,8 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Project> findById(@PathVariable Long id) {
-        Optional<Project> project = iProjectService.findById(id);
-        return project.map(ResponseEntity::ok)
+    public ResponseEntity<ProjectDTO> findById(@PathVariable Long id) {
+        return iProjectService.findById(id).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -69,7 +69,7 @@ public class ProjectController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Project>> findAll() {
+    public ResponseEntity<List<ProjectDTO>> findAll() {
         return ResponseEntity.ok(iProjectService.findAll());
     }
 }

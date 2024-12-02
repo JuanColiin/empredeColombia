@@ -1,8 +1,8 @@
 package com.ecosistemadigital.emprendeco.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +35,9 @@ public class Project {
     @Column(name = "project_city")
     private String city;
 
+    @Column(name = "project_picture")
+    private String picture;
+
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
     @JsonManagedReference(value = "project-comments")
     private List<Comment> comments;
@@ -42,6 +45,6 @@ public class Project {
 
     @ManyToOne(fetch = FetchType.LAZY)  // Aseguramos que la relación con User se cargue perezosamente
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"projects", "comments"})  // Evitar ciclos de referencia y datos innecesarios
+    @JsonBackReference(value = "user-projects") // Evitar ciclos de referencia y datos innecesarios
     private User pushing;
 }

@@ -1,8 +1,6 @@
 package com.ecosistemadigital.emprendeco.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,13 +22,14 @@ public class Comment {
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"comments", "projects"})  // Evita la serialización recursiva de 'comments' en 'User'
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference(value = "user-comments") // Indica que esta es la referencia inversa
     private User author;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    @JsonBackReference  // Evita la serialización recursiva de 'comments' en 'Project'
+    @JsonBackReference(value = "project-comments")  // Evita la serialización recursiva de 'comments' en 'Project'
     private Project project;
 
 }

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICommentService {
-    Comment save (CommentDTO comment);
+    Comment save(CommentDTO comment);
     Optional<Comment> findById(Long id);
     void update(Comment comment) throws Exception;
     void delete(Long id) throws Exception;
     List<Comment> findAll();
-    List<Comment> findByProjectId(Long projectId);
+    List<CommentDTO> findByProjectId(Long projectId);
 }

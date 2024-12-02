@@ -1,5 +1,7 @@
 package com.ecosistemadigital.emprendeco.service.impl;
 
+import com.ecosistemadigital.emprendeco.Dto.CommentDTO;
+import com.ecosistemadigital.emprendeco.Dto.ProjectDTO;
 import com.ecosistemadigital.emprendeco.entity.Project;
 import com.ecosistemadigital.emprendeco.entity.User;
 import com.ecosistemadigital.emprendeco.repository.IUserRepository;
@@ -27,8 +29,25 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Optional<Project> findById(Long id) {
-        return projectRepository.findById(id);
+    public Optional<ProjectDTO> findById(Long id) {
+        return projectRepository.findById(id).map(project -> ProjectDTO.builder()
+                .id(project.getId())
+                .name(project.getName())
+                .description(project.getDescription())
+                .category(project.getCategory())
+                .city(project.getCity())
+                .picture(project.getPicture())
+                .pushingName(project.getPushing().getName())
+                .pushingEmail(project.getPushing().getEmail())
+                .comments(project.getComments().stream()
+                        .map(comment -> CommentDTO.builder()
+                                .id(comment.getId())
+                                .text(comment.getText())
+                                .authorId(comment.getAuthor().getId())
+                                .authorName(comment.getAuthor().getName())
+                                .build())
+                        .toList())
+                .build());
     }
 
     @Override
@@ -52,7 +71,7 @@ public class ProjectService implements IProjectService {
 
     @Override
     public void delete(Long id) {
-        Optional<Project> projectToLookFor = findById(id);
+        Optional<Project> projectToLookFor = projectRepository.findById(id);
         if (projectToLookFor.isPresent()) {
             projectRepository.deleteById(id);
         } else {
@@ -61,7 +80,16 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public List<Project> findAll() {
-        return projectRepository.findAll();
+    public List<ProjectDTO> findAll() {
+        return projectRepository.findAll().stream()
+                .map(project -> ProjectDTO.builder()
+                        .id(project.getId())
+                        .name(project.getName())
+                        .description(project.getDescription())
+                        .category(project.getCategory())
+                        .city(project.getCity())
+                        .picture(project.getPicture())
+                        .build())
+                .toList();
     }
 }

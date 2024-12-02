@@ -2,7 +2,6 @@ package com.ecosistemadigital.emprendeco.controller;
 
 import com.ecosistemadigital.emprendeco.Dto.CommentDTO;
 import com.ecosistemadigital.emprendeco.entity.Comment;
-import com.ecosistemadigital.emprendeco.entity.Project;
 import com.ecosistemadigital.emprendeco.service.IProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +39,8 @@ import java.util.Optional;
 
         // Obtener comentarios de un proyecto específico
         @GetMapping("/project/{projectId}")
-        public ResponseEntity<List<Comment>> getCommentsByProjectId(@PathVariable Long projectId) {
-            List<Comment> comments = commentService.findByProjectId(projectId);
-            return ResponseEntity.ok(comments);
+        public ResponseEntity<List<CommentDTO>> getCommentsByProjectId(@PathVariable Long projectId) {
+            return ResponseEntity.ok(commentService.findByProjectId(projectId));
         }
 
         // Crear un nuevo comentario
