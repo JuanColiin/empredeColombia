@@ -1,9 +1,11 @@
 package com.ecosistemadigital.emprendeco.controller;
 
+import com.ecosistemadigital.emprendeco.Dto.CommentDTO;
 import com.ecosistemadigital.emprendeco.entity.Comment;
 import com.ecosistemadigital.emprendeco.entity.Project;
 import com.ecosistemadigital.emprendeco.service.IProjectService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.Optional;
     @RestController
     @RequestMapping("comment")
     @RequiredArgsConstructor
+    @Slf4j
     public class CommentController {
 
         private final ICommentService commentService;
@@ -44,20 +47,15 @@ import java.util.Optional;
 
         // Crear un nuevo comentario
         @PostMapping
-        public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
+        public ResponseEntity<?> createComment(@RequestBody CommentDTO comment) {
             // Verificar si el proyecto existe
-            if (comment.getProject() == null || comment.getProject().getId() == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Error si no se pasa un proyecto
+            try {
+                var savedComment = commentService.save(comment);
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
+            } catch (Exception e) {
+                log.error("Error al crear comentario", e);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
-
-            Optional<Project> existingProject = projectService.findById(comment.getProject().getId());
-            if (existingProject.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Error si el proyecto no existe
-            }
-
-            comment.setProject(existingProject.get());
-            Comment savedComment = commentService.save(comment);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedComment);
         }
 
 

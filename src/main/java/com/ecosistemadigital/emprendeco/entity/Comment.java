@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "comment")
@@ -15,24 +12,25 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_comment")
+    @Column(name = "comment_id")
     private Long id;
 
-    @Column(name = "text_comment")
+    @Column(name = "comment_text")
     private String text;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user")
-    @JsonIgnoreProperties("comments")  // Evita la serialización recursiva de 'comments' en 'User'
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"comments", "projects"})  // Evita la serialización recursiva de 'comments' en 'User'
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_project")
-    @JsonBackReference
+    @JoinColumn(name = "project_id")
+    @JsonBackReference  // Evita la serialización recursiva de 'comments' en 'Project'
     private Project project;
-
 
 }

@@ -1,6 +1,9 @@
 package com.ecosistemadigital.emprendeco.service.impl;
 
+import com.ecosistemadigital.emprendeco.Dto.CommentDTO;
 import com.ecosistemadigital.emprendeco.entity.Comment;
+import com.ecosistemadigital.emprendeco.entity.Project;
+import com.ecosistemadigital.emprendeco.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ecosistemadigital.emprendeco.repository.ICommentRepository;
@@ -20,8 +23,20 @@ public class CommentService implements ICommentService {
 
     @Override
     @Transactional
-    public Comment save(Comment comment) {
-        return commentRepository.save(comment);
+    public Comment save(CommentDTO comment) {
+        var commentToSave = Comment.builder()
+                        .text(comment.getText())
+                        .author(User.builder()
+                                .id(comment.getAuthorId())
+                                .build())
+                        .project(Project.builder()
+                                .id(comment.getProjectId())
+                                .build())
+                        .build();
+
+        commentRepository.save(commentToSave);
+
+        return commentToSave;
     }
 
     @Override
