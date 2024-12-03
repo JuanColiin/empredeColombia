@@ -5,6 +5,7 @@ import com.ecosistemadigital.emprendeco.entity.Comment;
 import com.ecosistemadigital.emprendeco.entity.Project;
 import com.ecosistemadigital.emprendeco.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.ecosistemadigital.emprendeco.repository.ICommentRepository;
 import com.ecosistemadigital.emprendeco.service.ICommentService;
@@ -15,15 +16,17 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CommentService implements ICommentService {
+
 
     private final ICommentRepository commentRepository;
 
     @Override
     @Transactional
-    public Comment save(CommentDTO comment) {
+    public CommentDTO save(CommentDTO comment) {
         var commentToSave = Comment.builder()
                         .text(comment.getText())
                         .author(User.builder()
@@ -36,7 +39,7 @@ public class CommentService implements ICommentService {
 
         commentRepository.save(commentToSave);
 
-        return commentToSave;
+        return comment;
     }
 
     @Override
@@ -47,6 +50,7 @@ public class CommentService implements ICommentService {
     @Override
     @Transactional
     public CommentDTO update(Long commentId, CommentDTO comment) throws Exception {
+        log.info("Actualizando comentario con id: " + commentId);
         Optional<Comment> existingComment = commentRepository.findById(commentId);
         if (existingComment.isEmpty()) {
             throw new Exception("Comentario no encontrado para actualizar");

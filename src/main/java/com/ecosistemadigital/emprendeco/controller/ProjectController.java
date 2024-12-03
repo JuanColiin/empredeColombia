@@ -48,6 +48,7 @@ public class ProjectController {
             project.setDescription(updatedProject.getDescription());
             project.setCategory(updatedProject.getCategory());
             project.setCity(updatedProject.getCity());
+            project.setPicture(updatedProject.getPicture());
 
             // Guarda el proyecto actualizado
             Project savedProject = projectRepository.save(project);

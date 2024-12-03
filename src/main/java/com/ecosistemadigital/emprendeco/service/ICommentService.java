@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICommentService {
-    Comment save(CommentDTO comment);
+    CommentDTO save(CommentDTO comment);
     Optional<Comment> findById(Long id);
     CommentDTO update(Long commentId,CommentDTO comment) throws Exception;
     void delete(Long id) throws Exception;
