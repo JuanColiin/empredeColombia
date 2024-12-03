@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ICommentService {
     Comment save(CommentDTO comment);
     Optional<Comment> findById(Long id);
-    void update(Comment comment) throws Exception;
+    CommentDTO update(Long commentId,CommentDTO comment) throws Exception;
     void delete(Long id) throws Exception;
     List<Comment> findAll();
     List<CommentDTO> findByProjectId(Long projectId);

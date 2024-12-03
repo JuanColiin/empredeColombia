@@ -45,5 +45,8 @@ public class User {
     @JsonManagedReference(value = "user-projects") // Añadir una referencia personalizada
     private List<Project> projects;
 
+    public User orElseThrow(Object userNotFound) {
+        return null;
+    }
 }
 

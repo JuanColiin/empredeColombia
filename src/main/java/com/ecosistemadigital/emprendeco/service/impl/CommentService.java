@@ -46,11 +46,25 @@ public class CommentService implements ICommentService {
 
     @Override
     @Transactional
-    public void update(Comment comment) throws Exception {
-        if (!commentRepository.existsById(comment.getId())) {
+    public CommentDTO update(Long commentId, CommentDTO comment) throws Exception {
+        Optional<Comment> existingComment = commentRepository.findById(commentId);
+        if (existingComment.isEmpty()) {
             throw new Exception("Comentario no encontrado para actualizar");
         }
-        commentRepository.save(comment);
+
+        Comment updatedComment = existingComment.get().toBuilder()
+                .text(comment.getText())
+                .build();
+
+        commentRepository.save(updatedComment);
+
+        return CommentDTO.builder()
+                .id(updatedComment.getId())
+                .text(updatedComment.getText())
+                .authorId(updatedComment.getAuthor().getId())
+                .authorName(updatedComment.getAuthor().getName())
+                .projectId(updatedComment.getProject().getId())
+                .build();
     }
 
     @Override

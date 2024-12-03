@@ -10,7 +10,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class Comment {
 
     @Id
@@ -23,13 +23,11 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference(value = "user-comments") // Indica que esta es la referencia inversa
+    @JsonBackReference(value = "user-comments") // Evita la serialización recursiva
     private User author;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    @JsonBackReference(value = "project-comments")  // Evita la serialización recursiva de 'comments' en 'Project'
+    @JsonBackReference(value = "project-comments")  // Evita la serialización recursiva
     private Project project;
-
 }

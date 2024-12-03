@@ -2,7 +2,10 @@ package com.ecosistemadigital.emprendeco.controller;
 
 import com.ecosistemadigital.emprendeco.Dto.CommentDTO;
 import com.ecosistemadigital.emprendeco.entity.Comment;
+import com.ecosistemadigital.emprendeco.entity.Project;
+import com.ecosistemadigital.emprendeco.entity.User;
 import com.ecosistemadigital.emprendeco.service.IProjectService;
+import com.ecosistemadigital.emprendeco.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import java.util.Optional;
 
         private final ICommentService commentService;
         private final IProjectService projectService;
+        private final UserService userService;
 
         // Obtener todos los comentarios
         @GetMapping
@@ -60,24 +64,11 @@ import java.util.Optional;
 
 
         @PutMapping("/{id}")
-        public ResponseEntity<Comment> updateComment(@PathVariable Long id, @RequestBody Comment comment) throws Exception {
-            Optional<Comment> existingComment = commentService.findById(id);
-            if (existingComment.isPresent()) {
-                // Asegúrate de que el comentario tiene el ID correcto
-                comment.setId(id);
-
-                // Verificar si el proyecto existe antes de asociarlo
-                if (comment.getProject() != null && comment.getProject().getId() == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Si no se pasa un proyecto válido
-                }
-
-                // Si todo está bien, actualizamos el comentario
-                commentService.update(comment);
-                return ResponseEntity.ok(comment);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+        public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id, @RequestBody CommentDTO comment) throws Exception {
+            CommentDTO updatedComment = commentService.update(id, comment);
+            return ResponseEntity.ok(updatedComment);
         }
+
 
         // Eliminar un comentario
         @DeleteMapping("/{id}")
